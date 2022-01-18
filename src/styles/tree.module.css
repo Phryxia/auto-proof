@@ -1,0 +1,40 @@
+* {
+  box-sizing: content-box;
+}
+
+.token {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: flex-start;
+  margin: 2px;
+  padding: 2px;
+  border: 1px solid black;
+  border-radius: 3px;
+  vertical-align: center;
+}
+
+.pow {
+  align-items: flex-end;
+}
+
+.exponent {
+  position: relative;
+  margin-bottom: 1em;
+  font-size: 0.8em;
+}
+
+.logbase {
+  position: relative;
+  margin-top: 1em;
+  font-size: 0.8em;
+}
+
+.frac {
+  flex-direction: column;
+}
+
+.frac hr {
+  width: 80%;
+  border: 1px solid black;
+}

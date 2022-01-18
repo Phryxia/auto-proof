@@ -1,0 +1,30 @@
+.container {
+  display: flex;
+}
+
+.element {
+  display: inline;
+  position: relative;
+  padding: 0.5rem;
+  margin-right: 5px;
+  border-radius: 7px;
+
+  background-color: black;
+  color: #f9f9f9;
+}
+
+.tooltip {
+  z-index: 100;
+  position: absolute;
+  padding: 10px;
+  background-color: black;
+  display: none;
+  border-radius: 7px;
+  top: -5px;
+  left: 0;
+  transform: translate(0, -100%);
+}
+
+.isActive {
+  display: inline-block;
+}

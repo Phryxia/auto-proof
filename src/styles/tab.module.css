@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+}
+
+.entry {
+  border-radius: 1rem;
+  margin-right: 0.5rem;
+  padding: 0.5rem 2rem;
+
+  background-color: #f9f9f9;
+  color: black;
+  cursor: pointer;
+  border: none;
+  box-shadow: 5px 5px 5px #d9d9d9, -5px -5px 5px #ffffff;
+}
+
+.selected {
+  background-color: black;
+  color: #f4f4f4;
+}

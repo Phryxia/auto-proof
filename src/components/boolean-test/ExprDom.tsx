@@ -5,6 +5,8 @@ import {
   And,
   BooleanConstant,
   BooleanVariable,
+  Equivalence,
+  Implication,
   Not,
   Or,
 } from '../../boolean-algebra/nodes'
@@ -61,6 +63,24 @@ export default function ExprDom({ expr }: { expr: BooleanExpression }) {
       <span className={cx('token')}>
         <ExprDom expr={expr.expr0} />
         |
+        <ExprDom expr={expr.expr1} />
+      </span>
+    )
+
+  if (expr instanceof Implication)
+    return (
+      <span className={cx('token')}>
+        <ExprDom expr={expr.expr0} />
+        →
+        <ExprDom expr={expr.expr1} />
+      </span>
+    )
+
+  if (expr instanceof Equivalence)
+    return (
+      <span className={cx('token')}>
+        <ExprDom expr={expr.expr0} />
+        ↔
         <ExprDom expr={expr.expr1} />
       </span>
     )

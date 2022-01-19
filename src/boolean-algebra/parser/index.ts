@@ -1,14 +1,21 @@
 import { BooleanExpression } from '../model'
-import { And, BooleanConstant, BooleanVariable, Not, Or } from '../nodes'
+import {
+  And,
+  BooleanConstant,
+  BooleanVariable,
+  Equivalence,
+  Implication,
+  Not,
+  Or,
+} from '../nodes'
 
 export enum TokenType {
   IDENTIFIER = 'identifier',
   OP_NOT = '~',
   OP_AND = '&',
   OP_OR = '|',
-  OP_XOR = '^',
   OP_IMPLIES = '->',
-  OP_EQUIVALENT = '=',
+  OP_EQUIVALENT = '<->',
   PARENTHESIS_LEFT = '(',
   PARENTHESIS_RIGHT = ')',
   UNKNOWN = '?',
@@ -67,22 +74,74 @@ export class BooleanParser {
         }
       }
 
-      // Operator
-      if (c && '~|&^'.includes(c)) {
+      // Single Operator
+      if (c && '~|&'.includes(c)) {
         const position = ptr - 1
         content += c
 
         let type: TokenType
         if (c === '~') type = TokenType.OP_NOT
         else if (c === '&') type = TokenType.OP_AND
-        else if (c === '|') type = TokenType.OP_OR
-        else type = TokenType.OP_XOR
+        else type = TokenType.OP_OR
 
         c = getchar()
 
         return {
           content,
           type,
+          position,
+        }
+      }
+
+      // Implication
+      if (c && c === '-') {
+        const position = ptr - 1
+        content += c
+        c = getchar()
+
+        if (c && c === '>') {
+          content += c
+          c = getchar()
+
+          return {
+            content,
+            type: TokenType.OP_IMPLIES,
+            position,
+          }
+        }
+
+        return {
+          content,
+          type: TokenType.UNKNOWN,
+          position,
+        }
+      }
+
+      // Equivalence
+      if (c && c === '<') {
+        const position = ptr - 1
+        content += c
+        c = getchar()
+
+        if (c && c === '-') {
+          content += c
+          c = getchar()
+
+          if (c && c === '>') {
+            content += c
+            c = getchar()
+
+            return {
+              content,
+              type: TokenType.OP_EQUIVALENT,
+              position,
+            }
+          }
+        }
+
+        return {
+          content,
+          type: TokenType.UNKNOWN,
           position,
         }
       }
@@ -180,12 +239,36 @@ export class BooleanParser {
       )
     }
     /*
-      E := T | E '|' T
+      E := I | E '<->' I
+      I := C | I '->' C
+      C := T | E '|' T
       T := U | T '&' u
       U := L | '~' U
       L := identifier | '(' E ')'
     */
     function parseE(): BooleanExpression {
+      let lvalue = parseI()
+
+      while (token.type === TokenType.OP_EQUIVALENT) {
+        token = getToken()
+        lvalue = new Equivalence(lvalue, parseI())
+      }
+
+      return lvalue
+    }
+
+    function parseI(): BooleanExpression {
+      let lvalue = parseC()
+
+      while (token.type === TokenType.OP_IMPLIES) {
+        token = getToken()
+        lvalue = new Implication(lvalue, parseC())
+      }
+
+      return lvalue
+    }
+
+    function parseC(): BooleanExpression {
       let lvalue = parseT()
 
       while (token.type === TokenType.OP_OR) {

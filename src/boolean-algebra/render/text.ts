@@ -1,5 +1,13 @@
 import { BooleanExpression } from '../model'
-import { And, BooleanConstant, BooleanVariable, Not, Or } from '../nodes'
+import {
+  And,
+  BooleanConstant,
+  BooleanVariable,
+  Equivalence,
+  Implication,
+  Not,
+  Or,
+} from '../nodes'
 
 function wrap(str: string, isWrapped: boolean): string {
   return isWrapped ? `(${str})` : str
@@ -25,6 +33,12 @@ export default function renderToText(expr: BooleanExpression): string {
 
   if (expr instanceof Or)
     return `${renderToText(expr.expr0)}|${renderToText(expr.expr1)}`
+
+  if (expr instanceof Implication)
+    return `${renderToText(expr.expr0)}->${renderToText(expr.expr1)}`
+
+  if (expr instanceof Equivalence)
+    return `${renderToText(expr.expr0)}<->${renderToText(expr.expr1)}`
 
   return '?'
 }

@@ -3,6 +3,8 @@ import {
   And,
   BooleanConstant,
   BooleanVariable,
+  Equivalence,
+  Implication,
   Not,
   Or,
 } from '@src/boolean-algebra/nodes'
@@ -88,6 +90,36 @@ export function inferInputToTarget(
         inferInputToTarget(expr.expr1, false)
       )
     }
+  }
+
+  if (expr instanceof Implication) {
+    if (target) {
+      return joinOr(
+        joinAnd(
+          inferInputToTarget(expr.expr0, true),
+          inferInputToTarget(expr.expr1, true)
+        ),
+        inferInputToTarget(expr.expr0, false)
+      )
+    } else {
+      return joinAnd(
+        inferInputToTarget(expr.expr0, true),
+        inferInputToTarget(expr.expr1, false)
+      )
+    }
+  }
+
+  if (expr instanceof Equivalence) {
+    return joinOr(
+      joinAnd(
+        inferInputToTarget(expr.expr0, true),
+        inferInputToTarget(expr.expr1, true)
+      ),
+      joinAnd(
+        inferInputToTarget(expr.expr0, false),
+        inferInputToTarget(expr.expr1, false)
+      )
+    )
   }
 
   throw Error('unsupported node')

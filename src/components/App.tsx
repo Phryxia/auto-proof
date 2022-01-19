@@ -5,12 +5,14 @@ import useQuery from '@src/hooks/useQuery'
 import tabStyles from '@src/styles/app-tab.module.css'
 import styles from '@src/styles/app.module.css'
 import BooleanTest from './boolean-test'
+import AutoProof from './autoProof'
 import Tab from './Tab'
 
 const cx = classNames.bind(styles)
 
 enum PageTab {
   BOOLEAN_ALGEBRA = 'boolean',
+  AUTO_PROOF = 'auto-proof',
 }
 
 const TAB_ENTRIES = [
@@ -18,15 +20,17 @@ const TAB_ENTRIES = [
     label: 'Boolean Algebra',
     value: PageTab.BOOLEAN_ALGEBRA,
   },
+  {
+    label: 'Auto Proof',
+    value: PageTab.AUTO_PROOF,
+  },
 ]
 
 function extractPage(queries: qs.ParsedQuery): PageTab {
-  switch (queries.page) {
-    case PageTab.BOOLEAN_ALGEBRA:
-      return queries.page
-    default:
-      return PageTab.BOOLEAN_ALGEBRA
+  if (queries.page) {
+    return queries.page as PageTab
   }
+  return PageTab.BOOLEAN_ALGEBRA
 }
 
 function App() {
@@ -57,6 +61,7 @@ function App() {
 
       <div className={cx('content')}>
         {page === PageTab.BOOLEAN_ALGEBRA && <BooleanTest />}
+        {page === PageTab.AUTO_PROOF && <AutoProof />}
       </div>
     </>
   )

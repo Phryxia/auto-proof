@@ -5,32 +5,53 @@ import { useTextArea } from '@src/hooks/useTextArea'
 const parser = new BooleanParser()
 
 export default function () {
-  const [TextArea, textValue] = useTextArea()
+  const [Premises, premises] = useTextArea()
+  const [Conclusion, conclusion] = useTextArea()
 
-  const { expression } = parser.parse(textValue)
+  const predicate =
+    premises
+      .split('\n')
+      .map((s) => `(${s})`)
+      .join('&') +
+    '->' +
+    `(${conclusion})`
+  const { expression } = parser.parse(predicate)
+  const combinations = expression ? inferInputToTarget(expression, false) : []
 
-  const combinations = expression ? inferInputToTarget(expression, true) : []
+  const isValidArgument = combinations !== 'any' && combinations.length === 0
 
   return (
     <div>
       <h1>Auto Proof</h1>
-      <div>{TextArea}</div>
+      <h2>Premises</h2>
+      <div>{Premises}</div>
 
-      <div>
-        {combinations === 'any'
-          ? 'any'
-          : combinations.length === 0
-          ? 'never'
-          : combinations.map((combination, index) => {
-              return (
+      <h2>Conclusion</h2>
+      <div>{Conclusion}</div>
+
+      <h2>Result</h2>
+      {expression && (
+        <div>
+          {isValidArgument ? (
+            'true'
+          ) : (
+            <>
+              false
+              <h3>Counter Examples</h3>
+              {combinations.map((variables, index) => (
                 <div key={index}>
-                  {Object.keys(combination)
-                    .map((vname) => `${vname}=${combination[vname]}`)
+                  {Object.keys(variables)
+                    .map(
+                      (vname) =>
+                        `${vname} = ${variables[vname] ? 'true' : 'false'}`
+                    )
                     .join(', ')}
                 </div>
-              )
-            })}
-      </div>
+              ))}
+            </>
+          )}
+        </div>
+      )}
     </div>
   )
 }

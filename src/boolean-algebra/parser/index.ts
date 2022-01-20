@@ -57,12 +57,12 @@ export class BooleanParser {
       }
 
       // Identifier
-      if (isAlphabet(c)) {
+      if (isAlphabet(c) || c === '_') {
         const position = ptr - 1
         content += c
         c = getchar()
 
-        while (isAlphabet(c)) {
+        while (isAlphabet(c) || c === '_') {
           content += c
           c = getchar()
         }
